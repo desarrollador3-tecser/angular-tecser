@@ -106,7 +106,7 @@ export class ResumenComponent implements OnInit {
                 confirmButtonText: 'Aceptar',
               }).then(() => {
                 // Redirigir a otra página o vista después de un segundo
-                window.location.href = './example'; // Cambia '/ruta-destino' por la URL a la que deseas redirigir
+                window.location.href = './example'; 
               });
             },
             (error) => {
@@ -194,11 +194,11 @@ export class ResumenComponent implements OnInit {
         const random = Math.floor(1000 + Math.random() * 9000);
         return random.toString();
     }
-    onDateChange(event: any, controlName: string): void {
+    onDateChange(event: any, stepName: string, controlName: string): void {
         const date = event.value;
         const formattedDate = this.formatDate(date);
-        this.horizontalStepperForm.get(`step1.${controlName}`)?.setValue(formattedDate);
-    }
+        this.horizontalStepperForm.get(`${stepName}.${controlName}`)?.setValue(formattedDate);
+    }    
 
     formatDate(date: Date): string {
         const year = date.getFullYear();
