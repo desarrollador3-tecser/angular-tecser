@@ -525,23 +525,9 @@
                         <mat-form-field class="flex-auto">
                             <mat-label>Descripción de resultados</mat-label>
                             <textarea matInput formControlName="descripcionResultados" rows="5"></textarea>
-                        </mat-form-field>
-                        <div class="file-upload">
-                            <button
-                              type="button"
-                              (click)="triggerFileInput()"
-                            >
-                              Subir Archivo
-                            </button>
-                            <input
-                              id="fileInput"
-                              type="file"
-                              (change)="onFileSelected($event)"
-                              hidden
-                            />
-                            <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
-                        </div>                                                                         
+                        </mat-form-field>                                                                       
                 </div>
+                
                 <div class="mt-8 flex justify-end">
                     <button 
                         type="button" 
@@ -551,6 +537,48 @@
                         Enviar Formulario
                     </button>
                 </div>                
+            </mat-step>
+            <mat-step [stepControl]="horizontalStepperForm.get('step6')">
+                <form [formGroup]="horizontalStepperForm.get('step6')">
+                    <div class="file-upload-container">
+                        <!-- Encabezado con título y línea -->
+                        <div class="upload-header">
+                          <i class="upload-header-icon">☁️</i>
+                          <div class="upload-header-text">
+                            <h3>Seleccione archivos</h3>
+                            <p>Seleccione archivos desde su dispositivo</p>
+                          </div>
+                        </div>
+                        <hr />
+                      
+                        <!-- Zona de carga de archivos -->
+                        <div class="upload-box" (drop)="onDrop($event)" (dragover)="onDragOver($event)">
+                          <i class="upload-icon">☁️</i>
+                          
+                          <button type="button" (click)="fileInput.click()">Escoger archivo</button>
+                          <input
+                            type="file"
+                            #fileInput
+                            hidden
+                            (change)="onFileSelected($event)"
+                            accept=".jpeg,.png,.csv,.pdf"
+                          />
+                          <p>Escoja su archivo o arrastre y suelte aquí</p>
+                          <br>
+                          <small>JPEG, PNG, CSV y PDF menor a 50MB</small>
+                        </div>
+                      
+                        <!-- Botón Enviar Documento -->
+                        <button
+                          type="button"
+                          class="submit-button"
+                          [disabled]="!selectedFile"
+                          (click)="submitDocumentoActuacion()"
+                        >
+                          Enviar Documento
+                        </button>
+                      </div>                                       
+                </form>
             </mat-step>
         </mat-horizontal-stepper>
     </form>

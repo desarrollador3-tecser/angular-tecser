@@ -19,7 +19,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ResumenService } from './resumen.service'; // Asegúrate de que la ruta es correcta
+import { CommonModule } from '@angular/common';
+import { ResumenService } from './resumen.service'; 
 import Swal from 'sweetalert2';
 
 
@@ -31,6 +32,7 @@ import Swal from 'sweetalert2';
     encapsulation: ViewEncapsulation.None,
     imports: [
         MatIconModule,
+        CommonModule,
         FormsModule,
         ReactiveFormsModule,
         MatStepperModule,
@@ -49,6 +51,7 @@ import Swal from 'sweetalert2';
 export class ResumenComponent implements OnInit {
     horizontalStepperForm: UntypedFormGroup;
     selectedFile: File | null = null; 
+    isLoading: boolean = true;
 
     constructor(private _formBuilder: UntypedFormBuilder, 
         private resumenService: ResumenService) {}
@@ -59,12 +62,14 @@ export class ResumenComponent implements OnInit {
       }
 
       onFileSelected(event: Event): void {
-      const input = event.target as HTMLInputElement;
-      if (input?.files?.length) {
-        this.selectedFile = input.files[0];
-        console.log('Archivo seleccionado:', this.selectedFile);
-      }
-    }
+        const input = event.target as HTMLInputElement;
+        if (input?.files?.length) {
+            this.selectedFile = input.files[0];
+            console.log('Archivo seleccionado:', this.selectedFile);
+        } else {
+            console.log('No se seleccionó ningún archivo.');
+        }
+    }    
     
     submitForm(): void {
         if (this.horizontalStepperForm.valid) {
@@ -175,6 +180,9 @@ export class ResumenComponent implements OnInit {
                 tipoActuacion: [''], 
                 descripcionResultados: [''], 
             }),            
+            step6: this._formBuilder.group({
+              documentoActuacion: [Validators.required],
+          }),
         });
     }
     onPracticaChange(event: any): void {
@@ -230,4 +238,34 @@ export class ResumenComponent implements OnInit {
         }
         return result;
       }      
+      submitDocumentoActuacion(): void {
+        console.log('Intentando enviar el documento...');
+        if (this.selectedFile) {
+            const formData = new FormData();
+            formData.append('file', this.selectedFile, this.selectedFile.name);
+        
+            console.log('FormData construido:', formData.get('file'));
+    
+            this.resumenService.uploadFile(formData).subscribe(
+                (response) => {
+                    console.log('Documento enviado con éxito:', response);
+                },
+                (error) => {
+                    console.error('Error al enviar el documento:', error);
+                }
+            );
+        } else {
+            console.warn('No hay archivo seleccionado.');
+        }
+    }
+    onDragOver(event: DragEvent): void {
+      event.preventDefault();
+    }
+  
+    onDrop(event: DragEvent): void {
+      event.preventDefault();
+      if (event.dataTransfer?.files.length) {
+        this.selectedFile = event.dataTransfer.files[0];
+      }
+    }  
 }
